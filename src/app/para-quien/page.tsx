@@ -3,41 +3,44 @@ import Image from "next/image";
 import Cta from "@/components/cta";
 import { Head } from "@/components/sections";
 import SizeSelector from "@/components/size-selector";
-import { PACKAGES, PROFILES } from "@/lib/content";
+import { bot, getContent } from "@/lib/content";
+import { getLocale } from "@/lib/locale";
 
-export const metadata: Metadata = {
-  title: "¿Para quién es?",
-  description: "Skillia crece al tamaño de tu empresa: Start y Pro para equipos pequeños, Team, Business y Enterprise hasta 1.000 empleados.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const m = getContent(await getLocale()).meta.paraQuien;
+  return { title: m.title, description: m.desc };
+}
 
-export default function ParaQuien() {
+export default async function ParaQuien() {
+  const t = getContent(await getLocale());
+  const w = t.who;
   return (
     <>
       <section className="sk-hero sk-hero-sm">
         <div className="sk-blob sk-blob-a" /><div className="sk-blob sk-blob-b" />
         <div className="sk-wrap sk-hero-grid">
           <div className="sk-hero-copy">
-            <p className="sk-eyebrow">¿Para quién es Skillia?</p>
-            <h1>Un programa que crece <span className="sk-grad">al tamaño de tu empresa</span>.</h1>
-            <p className="sk-lead">Desde un equipo de pocas personas hasta organizaciones de 1.000 empleados. Mueve el control, indícanos cuántas personas son y te mostramos el plan que corresponde.</p>
+            <p className="sk-eyebrow">{w.eyebrow}</p>
+            <h1>{w.h1[0]}<span className="sk-grad">{w.h1[1]}</span>{w.h1[2]}</h1>
+            <p className="sk-lead">{w.lead}</p>
           </div>
           <div className="sk-hero-art sk-hero-art-sm" aria-hidden="true">
             <div className="sk-orb" />
-            <Image className="sk-hero-pet" src="/img/pets/point.webp" alt="" width={260} height={351} priority />
+            <Image className="sk-hero-pet" src="/img/pets/point.webp" alt="" width={520} height={702} priority />
           </div>
         </div>
       </section>
 
       <SizeSelector />
 
-      <section className="sk-section sk-tint" data-bot="chart|Cada paquete tiene un enfoque y un resultado esperado.">
+      <section className="sk-section sk-tint" data-bot={bot("chart", t.bot.sections.packages)}>
         <div className="sk-wrap">
-          <Head eyebrow="Paquetes empresariales" title="Enfoque y resultado esperado según el tamaño." />
-          <div className="sk-table-wrap sk-reveal">
+          <Head eyebrow={w.pkgEyebrow} title={w.pkgTitle} />
+          <div className="sk-table-wrap sk-neon sk-reveal">
             <table className="sk-table">
-              <thead><tr><th>Paquete</th><th>Tamaño</th><th>Enfoque</th><th>Resultado esperado</th></tr></thead>
+              <thead><tr>{w.pkgCols.map((c) => <th key={c}>{c}</th>)}</tr></thead>
               <tbody>
-                {PACKAGES.map((p) => (
+                {t.packages.map((p) => (
                   <tr key={p.n}><th>{p.n}</th><td>{p.size}</td><td>{p.focus}</td><td>{p.result}</td></tr>
                 ))}
               </tbody>
@@ -46,12 +49,12 @@ export default function ParaQuien() {
         </div>
       </section>
 
-      <section className="sk-section" data-bot="idea|Dentro de cada empresa, cada persona recibe una ruta distinta.">
+      <section className="sk-section" data-bot={bot("idea", t.bot.sections.profiles)}>
         <div className="sk-wrap">
-          <Head eyebrow="Y dentro de la empresa" title="La ruta se adapta a cada perfil, cargo y área." />
+          <Head eyebrow={w.profEyebrow} title={w.profTitle} />
           <div className="sk-cards sk-cards-4">
-            {PROFILES.map((p, i) => (
-              <article key={p.t} className="sk-card sk-reveal"><span className="sk-num">{i + 1}</span><h3>{p.t}</h3><p>{p.d}</p></article>
+            {t.profiles.map((p, i) => (
+              <article key={p.t} className="sk-card sk-neon sk-reveal"><span className="sk-num">{i + 1}</span><h3>{p.t}</h3><p>{p.d}</p></article>
             ))}
           </div>
         </div>

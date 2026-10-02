@@ -10,6 +10,9 @@ Sitio corporativo de Skillia (programa de capacitación y adopción de IA para e
 - `/metodologia` — modelo, niveles, talleres, ruta AI Builder, asesoría LLM
 
 ## Detalles
+- Bilingüe ES/EN: cookie `skillia-locale`, copy completo en `src/lib/content.ts` (es + en), selector en el header.
+- Neón: anillo animado `.sk-neon` (conic-gradient + `@property`) en `src/app/globals.css`.
+- Fotos: Pexels (licencia libre) — human/robot hands #8386434 y robot hand + network #8386437.
 - Robot mascota (`src/components/mascot.tsx`): recorre la página, cambia de pose y visita secciones marcadas con `data-bot="pose|mensaje"`. Respeta `prefers-reduced-motion`.
 - Contenido en `src/lib/content.ts`.
 - Formulario de diagnóstico: server action `src/app/actions.ts`. **Aún sin proveedor de correo**: las solicitudes quedan en los logs como `[SKILLIA_LEAD]`.

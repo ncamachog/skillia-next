@@ -2,23 +2,18 @@
 /* eslint-disable @next/next/no-img-element */
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { useLocale } from "./locale-provider";
 
 const POSES = ["wave", "idea", "think", "thumbs", "laptop", "zen", "tablet", "jump", "point", "chart", "lying", "run"];
-const TIPS = [
-  "¡Hola! Te acompaño mientras recorres Skillia.",
-  "Cada empleado empieza con una evaluación de nivel de IA.",
-  "Los talleres son semanales y duran 2 horas.",
-  "Un AI Builder crea agentes sin ser programador.",
-  "No buscamos expertos: buscamos que trabajen mejor con IA.",
-  "Te ayudamos a elegir entre Claude, ChatGPT, Gemini y más.",
-  "¿Cuántos son en tu empresa? Mira “¿Para quién es?”.",
-];
 
 type Api = { observe: () => void };
 
 /** Robot que camina por la página, cambia de pose, habla y visita las secciones `[data-bot="pose|mensaje"]`. */
 export default function Mascot() {
   const path = usePathname();
+  const { t } = useLocale();
+  const tipsRef = useRef<string[]>(t.bot.tips);
+  useEffect(() => { tipsRef.current = t.bot.tips; }, [t]);
   const botRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const bubRef = useRef<HTMLSpanElement>(null);
@@ -87,7 +82,7 @@ export default function Mascot() {
       walk(tx, ty, () => {
         if (my !== token) return;
         const p = pick(POSES.filter((q) => q !== "run" && q !== pose));
-        const talk = Math.random() < 0.45 ? TIPS[tipI++ % TIPS.length] : null;
+        const talk = Math.random() < 0.45 ? tipsRef.current[tipI++ % tipsRef.current.length] : null;
         rest(p, talk, rnd(3200, 5600), () => { if (my === token) wander(); });
       });
     }
@@ -106,7 +101,7 @@ export default function Mascot() {
       const my = ++token; clear();
       bot.classList.remove("walk", "flip");
       place(X, Y, 0);
-      setPose(pick(["jump", "wave", "thumbs", "idea"])); hop(); say(TIPS[tipI++ % TIPS.length], 4600);
+      setPose(pick(["jump", "wave", "thumbs", "idea"])); hop(); say(tipsRef.current[tipI++ % tipsRef.current.length], 4600);
       later(() => { if (my === token) wander(); }, 5200);
     }
     function onSay(e: Event) {
@@ -147,7 +142,7 @@ export default function Mascot() {
         const my = ++token;
         walk(vw() * 0.12, floorY() - 6, () => {
           if (my !== token) return;
-          rest("wave", TIPS[0], 4600, () => { if (my === token) wander(); });
+          rest("wave", tipsRef.current[0], 4600, () => { if (my === token) wander(); });
         });
       }, 900);
     }
@@ -165,7 +160,7 @@ export default function Mascot() {
   useEffect(() => { api.current?.observe(); }, [path]);
 
   return (
-    <div id="sk-bot" ref={botRef} role="button" tabIndex={0} aria-label="Robot de Skillia: toca para ver un consejo">
+    <div id="sk-bot" ref={botRef} role="button" tabIndex={0} aria-label={t.bot.label}>
       <span className="bub" ref={bubRef} aria-hidden="true" />
       <div className="in"><img ref={imgRef} alt="" draggable={false} src="/img/pets/wave.webp" /></div>
       <span className="sh" />

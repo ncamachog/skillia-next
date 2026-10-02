@@ -1,42 +1,42 @@
 "use client";
 import { useActionState } from "react";
 import { submitLead, type LeadState } from "@/app/actions";
+import { bot } from "@/lib/content";
 import { Arrow, Checks } from "./icons";
+import { useLocale } from "./locale-provider";
 
 const initial: LeadState = { status: "idle", message: "" };
+const SIZE_VALUES = ["lt25", "25-100", "100-500", "500-1000"];
 
 export default function Cta() {
+  const { t } = useLocale();
+  const c = t.cta;
   const [state, action, pending] = useActionState(submitLead, initial);
   return (
-    <section className="sk-section sk-cta" id="contacto" data-bot="thumbs|¿Hablamos? El diagnóstico inicial toma 30–45 minutos.">
+    <section className="sk-section sk-cta" id="contacto" data-bot={bot("thumbs", t.bot.sections.cta)}>
       <div className="sk-wrap sk-cta-grid">
         <div className="sk-cta-copy">
-          <p className="sk-eyebrow">Empieza hoy</p>
-          <h2>Mide el nivel de IA de tu equipo y construye su ruta de aprendizaje.</h2>
-          <p>Cuéntanos sobre tu empresa y te proponemos el programa Skillia que mejor se ajusta a su tamaño y objetivos.</p>
-          <Checks items={["Evaluación inicial de 30–45 minutos", "Ruta adaptada al perfil de cada empleado", "Recomendación de herramientas y LLMs"]} />
+          <p className="sk-eyebrow">{c.eyebrow}</p>
+          <h2>{c.title}</h2>
+          <p>{c.text}</p>
+          <Checks items={c.checks} />
         </div>
-        <form className="sk-form" action={action}>
+        <form className="sk-form sk-neon" action={action}>
           <input type="text" name="website" className="sk-hp" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-          {state.status !== "idle" && (
-            <p className={`sk-notice sk-notice-${state.status}`} role="status">{state.message}</p>
-          )}
-          <label>Nombre<input name="nombre" required autoComplete="name" /></label>
-          <label>Empresa<input name="empresa" autoComplete="organization" /></label>
-          <label>Correo<input type="email" name="email" required autoComplete="email" /></label>
+          {state.status !== "idle" && <p className={`sk-notice sk-notice-${state.status}`} role="status">{state.message}</p>}
+          <label>{c.name}<input name="nombre" required autoComplete="name" /></label>
+          <label>{c.company}<input name="empresa" autoComplete="organization" /></label>
+          <label>{c.email}<input type="email" name="email" required autoComplete="email" /></label>
           <label>
-            Tamaño de la empresa
+            {c.size}
             <select name="tamano" defaultValue="">
-              <option value="">Selecciona…</option>
-              <option>Menos de 25 empleados</option>
-              <option>25–100 empleados</option>
-              <option>100–500 empleados</option>
-              <option>500–1.000 empleados</option>
+              <option value="">{c.choose}</option>
+              {c.sizes.map((s, i) => <option key={s} value={SIZE_VALUES[i]}>{s}</option>)}
             </select>
           </label>
-          <label>Mensaje<textarea name="mensaje" rows={3} /></label>
+          <label>{c.message}<textarea name="mensaje" rows={3} /></label>
           <button className="sk-btn" type="submit" disabled={pending}>
-            {pending ? "Enviando…" : "Solicitar diagnóstico"} <Arrow />
+            {pending ? c.sending : c.send} <Arrow />
           </button>
         </form>
       </div>

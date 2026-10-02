@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import { LEVELS } from "@/lib/content";
 
 export function Head({ eyebrow, title, children }: { eyebrow: string; title: React.ReactNode; children?: React.ReactNode }) {
   return (
@@ -11,12 +10,12 @@ export function Head({ eyebrow, title, children }: { eyebrow: string; title: Rea
   );
 }
 
-export function Ladder() {
+export function Ladder({ levels, word }: { levels: { t: string; d: string }[]; word: string }) {
   return (
     <ol className="sk-ladder">
-      {LEVELS.map((l, i) => (
-        <li key={l.t} className="sk-step sk-reveal" style={{ "--h": `${(i + 1) * 20}%` } as CSSProperties}>
-          <span className="sk-step-n">Nivel {i + 1}</span>
+      {levels.map((l, i) => (
+        <li key={l.t} className="sk-step sk-neon sk-reveal" style={{ "--h": `${(i + 1) * 20}%` } as CSSProperties}>
+          <span className="sk-step-n">{word} {i + 1}</span>
           <h3>{l.t}</h3>
           <p>{l.d}</p>
         </li>
